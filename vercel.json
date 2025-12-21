@@ -2,8 +2,19 @@
   "buildCommand": "npm run build",
   "framework": "astro",
   "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs20.x"
+    },
     "**/*.mjs": {
       "runtime": "nodejs20.x"
+    },
+    ".vercel/output/functions/**/*.func": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "build": {
+    "env": {
+      "NODE_VERSION": "20"
     }
   }
 }
