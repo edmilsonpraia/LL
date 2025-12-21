@@ -28,3 +28,6 @@ pnpm-debug.log*
 # Windows-specific files
 Thumbs.db
 nul
+
+# MDX files should not be in public folder
+public/*.mdx
