@@ -12,5 +12,11 @@ export default defineConfig({
     })
   ],
   output: 'server',
-  adapter: vercel()
+  adapter: vercel({
+    webAnalytics: {
+      enabled: false
+    },
+    functionPerRoute: false,
+    edgeMiddleware: false
+  })
 });

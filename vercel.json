@@ -1,0 +1,9 @@
+{
+  "buildCommand": "npm run build",
+  "framework": "astro",
+  "functions": {
+    "**/*.mjs": {
+      "runtime": "nodejs20.x"
+    }
+  }
+}
