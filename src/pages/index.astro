@@ -1,0 +1,513 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const ebookPrice = parseInt(import.meta.env.EBOOK_PRICE || '9999');
+---
+
+<Layout title="PINNs em Petrofísica - Ebook">
+  <main>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-text">
+            <h1>PINNs em Petrofísica</h1>
+            <p class="subtitle">Integração entre Deep Learning e Equações de Rocha</p>
+            <p class="description">
+              Descubra como Physics-Informed Neural Networks (PINNs) estão revolucionando
+              a análise petrofísica, combinando o poder do aprendizado profundo com
+              as leis fundamentais da física de rochas.
+            </p>
+            <div class="cta-section">
+              <div class="price">
+                <span class="price-label">Apenas</span>
+                <span class="price-value">{ebookPrice} Kz</span>
+              </div>
+              <a href="/pagamento" class="btn-primary">
+                Comprar Agora
+              </a>
+              <p class="guarantee">✓ Acesso vitalício • ✓ Garantia de 7 dias</p>
+            </div>
+          </div>
+          <div class="hero-image">
+            <div class="book-3d">
+              <img src="/ebook-cover.png" alt="Capa do Ebook PINNs em Petrofísica" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- O que você vai aprender -->
+    <section class="learning">
+      <div class="container">
+        <h2>O que você vai aprender</h2>
+        <div class="learning-grid">
+          <div class="learning-item">
+            <div class="icon">🧠</div>
+            <h3>Fundamentos de PINNs</h3>
+            <p>Entenda a teoria por trás das Physics-Informed Neural Networks e como elas diferem das redes neurais tradicionais.</p>
+          </div>
+          <div class="learning-item">
+            <div class="icon">⚡</div>
+            <h3>Aplicações em Petrofísica</h3>
+            <p>Aprenda a aplicar PINNs em problemas reais de caracterização de reservatórios e análise de propriedades de rochas.</p>
+          </div>
+          <div class="learning-item">
+            <div class="icon">📊</div>
+            <h3>Modelagem de Equações</h3>
+            <p>Integre equações diferenciais parciais com aprendizado de máquina para soluções mais precisas.</p>
+          </div>
+          <div class="learning-item">
+            <div class="icon">📈</div>
+            <h3>Otimização e Performance</h3>
+            <p>Técnicas avançadas para melhorar a precisão e eficiência dos modelos.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sobre o autor -->
+    <section class="author">
+      <div class="container">
+        <div class="author-content">
+          <div class="author-info">
+            <h2>Sobre o Autor</h2>
+            <h3>Edmilson D. Praia</h3>
+            <p>
+              Especialista em Machine Learning aplicado à Petrofísica, com anos de experiência
+              na indústria de óleo e gás. Edmilson combina conhecimento profundo em geociências
+              com expertise em inteligência artificial para trazer soluções inovadoras ao setor.
+            </p>
+            <p>
+              Seu trabalho pioneiro em Physics-Informed Neural Networks tem ajudado empresas
+              a otimizar a caracterização de reservatórios e melhorar a precisão de modelos petrofísicos.
+            </p>
+          </div>
+          <div class="author-image">
+            <div class="author-placeholder">
+              <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="48" fill="var(--bg-tertiary)" stroke="var(--secondary)" stroke-width="2"/>
+                <text x="50" y="55" text-anchor="middle" fill="var(--secondary)" font-size="20" font-weight="bold">EP</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="final-cta">
+      <div class="container">
+        <h2>Comece Sua Jornada em PINNs Hoje</h2>
+        <p>Tenha acesso imediato ao conteúdo completo após a confirmação do pagamento</p>
+        <div class="cta-buttons">
+          <a href="/pagamento" class="btn-primary btn-large">
+            Comprar por {ebookPrice} Kz
+          </a>
+        </div>
+        <div class="payment-methods">
+          <p>Pagamento via Transferência Bancária • Confirmação em até 24h</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  main {
+    padding-top: 80px;
+  }
+
+  .hero {
+    padding: 3rem 0 4rem;
+    background: var(--gradient-bg);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .hero-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .hero-text {
+    text-align: left;
+    padding: 0 2rem;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    font-size: clamp(1.1rem, 3vw, 1.5rem);
+    color: var(--secondary);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+
+  .description {
+    font-size: clamp(1rem, 2vw, 1.1rem);
+    color: var(--text-tertiary);
+    margin-bottom: 2rem;
+    line-height: 1.8;
+  }
+
+  .cta-section {
+    margin-top: 2rem;
+  }
+
+  .price {
+    margin-bottom: 1.5rem;
+  }
+
+  .price-label {
+    display: block;
+    font-size: clamp(0.9rem, 2vw, 1rem);
+    color: var(--text-tertiary);
+    margin-bottom: 0.5rem;
+  }
+
+  .price-value {
+    display: block;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+
+  .btn-primary {
+    display: inline-block;
+    background: var(--gradient-primary);
+    color: white;
+    padding: clamp(0.875rem, 2vw, 1rem) clamp(2rem, 4vw, 2.5rem);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: clamp(1rem, 2vw, 1.1rem);
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px var(--shadow-hover);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px var(--shadow-hover);
+  }
+
+  .btn-large {
+    padding: clamp(1rem, 2.5vw, 1.25rem) clamp(2.5rem, 5vw, 3rem);
+    font-size: clamp(1.1rem, 2.5vw, 1.25rem);
+  }
+
+  .guarantee {
+    margin-top: 1rem;
+    color: var(--text-tertiary);
+    font-size: clamp(0.85rem, 2vw, 0.9rem);
+  }
+
+  .hero-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .book-3d {
+    perspective: 1000px;
+    animation: float 6s ease-in-out infinite;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .book-3d img {
+    width: 100%;
+    height: auto;
+    border-radius: 1rem;
+    box-shadow: 0 20px 60px var(--shadow-color);
+    transform: rotateY(-15deg) rotateX(5deg);
+    transition: transform 0.3s;
+  }
+
+  .book-3d:hover img {
+    transform: rotateY(-10deg) rotateX(2deg) scale(1.05);
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  .learning {
+    padding: 4rem 0 5rem;
+    background: var(--bg-primary);
+  }
+
+  .learning h2 {
+    text-align: center;
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    margin-bottom: 3rem;
+    color: var(--text-primary);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 3rem;
+  }
+
+  .learning-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .learning-item {
+    background: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .learning-item:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+    box-shadow: 0 8px 24px var(--shadow-color);
+  }
+
+  .icon {
+    font-size: clamp(2.5rem, 4vw, 3rem);
+    margin-bottom: 1rem;
+  }
+
+  .learning-item h3 {
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  .learning-item p {
+    color: var(--text-tertiary);
+    line-height: 1.6;
+    font-size: clamp(0.9rem, 2vw, 1rem);
+  }
+
+  .author {
+    padding: 4rem 0 5rem;
+    background: var(--bg-secondary);
+  }
+
+  .author-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .author-info {
+    text-align: left;
+  }
+
+  .author h2 {
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .author h3 {
+    font-size: clamp(1.5rem, 3vw, 1.8rem);
+    color: var(--secondary);
+    margin-bottom: 1.5rem;
+  }
+
+  .author p {
+    color: var(--text-tertiary);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+    font-size: clamp(0.95rem, 2vw, 1rem);
+    max-width: 100%;
+  }
+
+  .author-placeholder {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    aspect-ratio: 1;
+    margin: 0 auto;
+  }
+
+  .author-placeholder svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .final-cta {
+    padding: 4rem 0 5rem;
+    background: var(--gradient-bg);
+    text-align: center;
+  }
+
+  .final-cta h2 {
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .final-cta > .container > p {
+    color: var(--text-tertiary);
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    margin-bottom: 2rem;
+  }
+
+  .cta-buttons {
+    margin-bottom: 1.5rem;
+  }
+
+  .payment-methods p {
+    color: var(--text-tertiary);
+    font-size: clamp(0.85rem, 2vw, 0.9rem);
+  }
+
+  /* Responsividade Avançada */
+  @media (max-width: 1024px) {
+    main {
+      padding-top: 60px;
+    }
+
+    .hero-content {
+      gap: 3rem;
+    }
+
+    .learning-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      padding: 2rem 0 3rem;
+    }
+
+    .hero-content,
+    .author-content {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .hero-image {
+      order: -1;
+    }
+
+    .book-3d {
+      max-width: 300px;
+    }
+
+    .learning {
+      padding: 3rem 0 4rem;
+    }
+
+    .learning-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .learning-item {
+      padding: 1.5rem;
+    }
+
+    .author {
+      padding: 3rem 0 4rem;
+    }
+
+    .author-content {
+      text-align: center;
+    }
+
+    .author-info {
+      text-align: center;
+    }
+
+    .final-cta {
+      padding: 3rem 0 4rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-primary {
+      width: 100%;
+      max-width: 300px;
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    main {
+      padding-top: 50px;
+    }
+
+    .hero {
+      padding: 1.5rem 0 2rem;
+    }
+
+    .atom-icon {
+      width: 50px;
+      height: 50px;
+    }
+
+    .learning {
+      padding: 2rem 0 3rem;
+    }
+
+    .learning h2,
+    .author h2,
+    .final-cta h2 {
+      margin-bottom: 2rem;
+    }
+
+    .author {
+      padding: 2rem 0 3rem;
+    }
+
+    .final-cta {
+      padding: 2rem 0 3rem;
+    }
+
+    .book-3d {
+      max-width: 250px;
+    }
+  }
+
+  /* Landscape mobile */
+  @media (max-height: 600px) and (orientation: landscape) {
+    .hero {
+      padding: 2rem 0;
+    }
+
+    .learning,
+    .author,
+    .final-cta {
+      padding: 2rem 0;
+    }
+  }
+</style>

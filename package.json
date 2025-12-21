@@ -1,0 +1,24 @@
+{
+  "name": "pinns-petrofisica-ebook",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^2.0.3",
+    "@astrojs/node": "^8.2.0",
+    "astro": "^4.0.0",
+    "katex": "^0.16.27",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
+    "stripe": "^14.10.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0"
+  }
+}

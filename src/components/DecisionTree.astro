@@ -1,0 +1,59 @@
+---
+// Componente para renderizar árvores de decisão com Mermaid
+---
+
+<div class="decision-tree">
+  <slot />
+</div>
+
+<style>
+  .decision-tree {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    padding: 2rem;
+    border-radius: 0.75rem;
+    margin: 2rem 0;
+    overflow-x: auto;
+  }
+
+  .decision-tree :global(pre) {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 1rem 0;
+  }
+
+  .decision-tree :global(code) {
+    background: transparent;
+    color: var(--text-secondary);
+  }
+
+  /* Mermaid diagram styling */
+  .decision-tree :global(.mermaid) {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+  }
+</style>
+
+<script>
+  // Script para inicializar Mermaid se estiver disponível
+  if (typeof window !== 'undefined') {
+    // Aguardar o carregamento do Mermaid se necessário
+    const initMermaid = () => {
+      if (window.mermaid) {
+        window.mermaid.initialize({
+          startOnLoad: true,
+          theme: 'default',
+          securityLevel: 'loose'
+        });
+      }
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initMermaid);
+    } else {
+      initMermaid();
+    }
+  }
+</script>

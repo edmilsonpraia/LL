@@ -1,0 +1,423 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const ebookPrice = parseInt(import.meta.env.EBOOK_PRICE || '9900') / 100;
+const stripePublishableKey = import.meta.env.STRIPE_PUBLISHABLE_KEY || '';
+const stripeSecretKey = import.meta.env.STRIPE_SECRET_KEY || '';
+const isStripeConfigured = stripeSecretKey && stripeSecretKey.startsWith('sk_');
+---
+
+<Layout title="Checkout - PINNs em Petrofísica">
+  <main class="checkout-page">
+    <div class="container">
+      {!isStripeConfigured && (
+        <div class="config-warning">
+          <h3>⚠️ Stripe não configurado</h3>
+          <p>Para habilitar pagamentos, configure suas chaves do Stripe no arquivo <code>.env</code></p>
+          <ol>
+            <li>Acesse <a href="https://dashboard.stripe.com/test/apikeys" target="_blank">dashboard.stripe.com/test/apikeys</a></li>
+            <li>Copie suas chaves de teste</li>
+            <li>Cole no arquivo <code>.env</code> na raiz do projeto</li>
+            <li>Reinicie o servidor (<code>npm run dev</code>)</li>
+          </ol>
+        </div>
+      )}
+      <div class="checkout-container">
+        <div class="checkout-info">
+          <h1>Finalize sua compra</h1>
+          <div class="product-summary">
+            <div class="product-image">
+              <img src="/ebook-cover.png" alt="Capa do Ebook" />
+            </div>
+            <div class="product-details">
+              <h2>PINNs em Petrofísica</h2>
+              <p>Integração entre Deep Learning e Equações de Rocha</p>
+              <div class="product-features">
+                <div class="feature">✓ Acesso vitalício ao conteúdo</div>
+                <div class="feature">✓ Atualizações futuras incluídas</div>
+                <div class="feature">✓ Material em formato digital (MDX)</div>
+                <div class="feature">✓ Exemplos de código completos</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="total">
+            <span>Total:</span>
+            <span class="total-price">R$ {ebookPrice.toFixed(2)}</span>
+          </div>
+        </div>
+
+        <div class="checkout-form">
+          <h2>Informações de Pagamento</h2>
+
+          <form id="checkout-form">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                placeholder="seu@email.com"
+              />
+              <small>Você receberá o acesso neste email</small>
+            </div>
+
+            <div id="payment-message" class="message"></div>
+
+            <button type="submit" id="submit-button" class="btn-primary btn-full">
+              <span id="button-text">Pagar com Cartão</span>
+              <span id="spinner" class="spinner hidden"></span>
+            </button>
+          </form>
+
+          <div class="security-badges">
+            <div class="badge">🔒 Pagamento 100% Seguro</div>
+            <div class="badge">💳 Processado via Stripe</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .checkout-page {
+    min-height: 100vh;
+    padding: 4rem 0;
+    background: var(--bg-primary);
+  }
+
+  .config-warning {
+    background: rgba(251, 191, 36, 0.1);
+    border: 2px solid #fbbf24;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .config-warning h3 {
+    color: #fbbf24;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+  }
+
+  .config-warning p {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  .config-warning code {
+    background: var(--bg-secondary);
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    color: var(--secondary);
+    font-family: 'Courier New', monospace;
+  }
+
+  .config-warning ol {
+    color: var(--text-secondary);
+    padding-left: 1.5rem;
+    line-height: 1.8;
+  }
+
+  .config-warning li {
+    margin-bottom: 0.5rem;
+  }
+
+  .config-warning a {
+    color: var(--primary);
+    text-decoration: underline;
+  }
+
+  .config-warning a:hover {
+    color: var(--primary-light);
+  }
+
+  .checkout-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .checkout-info {
+    background: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+    height: fit-content;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: var(--text-primary);
+  }
+
+  .product-summary {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .product-image img {
+    width: 120px;
+    height: auto;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .product-details h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    color: var(--white);
+  }
+
+  .product-details p {
+    color: var(--gray);
+    margin-bottom: 1rem;
+  }
+
+  .product-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .feature {
+    color: var(--secondary);
+    font-size: 0.9rem;
+  }
+
+  .total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(59, 130, 246, 0.2);
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .total-price {
+    color: var(--secondary);
+  }
+
+  .checkout-form {
+    background: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+  }
+
+  .checkout-form h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--white);
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--white);
+    font-weight: 500;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--dark);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 0.5rem;
+    color: var(--white);
+    font-size: 1rem;
+    transition: border-color 0.3s;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  small {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--gray);
+    font-size: 0.85rem;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: var(--white);
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(59, 130, 246, 0.6);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .btn-full {
+    width: 100%;
+  }
+
+  .message {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    display: none;
+  }
+
+  .message.error {
+    display: block;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    color: #ef4444;
+  }
+
+  .message.success {
+    display: block;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.5);
+    color: #22c55e;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--white);
+    animation: spinner 0.6s linear infinite;
+  }
+
+  .spinner.hidden {
+    display: none;
+  }
+
+  @keyframes spinner {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .security-badges {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(59, 130, 246, 0.2);
+  }
+
+  .badge {
+    flex: 1;
+    text-align: center;
+    padding: 0.75rem;
+    background: var(--dark);
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--gray);
+  }
+
+  @media (max-width: 768px) {
+    .checkout-container {
+      grid-template-columns: 1fr;
+    }
+
+    .product-summary {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .product-image img {
+      margin: 0 auto;
+    }
+
+    .security-badges {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('checkout-form') as HTMLFormElement;
+  const submitButton = document.getElementById('submit-button') as HTMLButtonElement;
+  const buttonText = document.getElementById('button-text') as HTMLSpanElement;
+  const spinner = document.getElementById('spinner') as HTMLSpanElement;
+  const messageDiv = document.getElementById('payment-message') as HTMLDivElement;
+
+  function showMessage(text: string, type: 'error' | 'success' = 'error') {
+    messageDiv.textContent = text;
+    messageDiv.className = `message ${type}`;
+  }
+
+  function setLoading(loading: boolean) {
+    if (loading) {
+      submitButton.disabled = true;
+      buttonText.textContent = 'Processando...';
+      spinner.classList.remove('hidden');
+    } else {
+      submitButton.disabled = false;
+      buttonText.textContent = 'Pagar com Cartão';
+      spinner.classList.add('hidden');
+    }
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    messageDiv.className = 'message';
+
+    const email = (document.getElementById('email') as HTMLInputElement).value;
+
+    try {
+      // Cria uma sessão de checkout
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao criar sessão de checkout');
+      }
+
+      // Redireciona para o Stripe Checkout
+      window.location.href = data.url;
+    } catch (error) {
+      console.error('Erro:', error);
+      showMessage(error instanceof Error ? error.message : 'Erro ao processar pagamento', 'error');
+      setLoading(false);
+    }
+  });
+</script>

@@ -1,0 +1,786 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const ebookPrice = parseInt(import.meta.env.EBOOK_PRICE || '9999');
+const bankName = 'Banco BAI';
+const bankIBAN = 'AO06004000000157626710143';
+const bankAccount = '30157626710001';
+const accountHolder = 'Edmilson Delfim Praia';
+---
+
+<Layout title="Pagamento - PINNs em Petrofísica">
+  <main class="payment-page">
+    <div class="container">
+      <div class="payment-container">
+        <!-- Produto -->
+        <div class="product-info">
+          <div class="product-header">
+            <img src="/ebook-cover.png" alt="Capa do Ebook" class="product-cover" />
+            <div class="product-details">
+              <h1>PINNs em Petrofísica</h1>
+              <p>Integração entre Deep Learning e Equações de Rocha</p>
+              <div class="price-tag">
+                <span class="price-label">Valor:</span>
+                <span class="price-value">{ebookPrice} Kz</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="product-features">
+            <h3>O que você vai receber:</h3>
+            <ul>
+              <li>✓ Acesso vitalício ao conteúdo completo</li>
+              <li>✓ Material em formato digital interativo (MDX)</li>
+              <li>✓ Teoria completa sobre PINNs em Petrofísica</li>
+              <li>✓ Atualizações futuras incluídas</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Instruções de Pagamento -->
+        <div class="payment-section">
+          <div class="back-button-container">
+            <a href="/" class="btn-back">← Voltar para Página Principal</a>
+          </div>
+
+          <h2>Como Pagar</h2>
+
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3>Faça a Transferência Bancária</h3>
+              <p>Use o QR Code abaixo ou os dados bancários:</p>
+
+              <div class="pix-container">
+                <div class="qr-code-placeholder">
+                  <img src="/images/QR.jpeg" alt="QR Code - Dados Bancários" class="qr-code-image" />
+                  <p class="qr-note">Escaneie para ver os dados</p>
+                </div>
+
+                <div class="pix-details">
+                  <div class="pix-info-item">
+                    <strong>Banco:</strong>
+                    <span>{bankName}</span>
+                  </div>
+
+                  <div class="pix-info-item">
+                    <strong>IBAN:</strong>
+                    <div class="copy-field">
+                      <input type="text" id="bank-iban" value={bankIBAN} readonly />
+                      <button class="btn-copy" onclick="copyBankIBAN()">Copiar</button>
+                    </div>
+                  </div>
+
+                  <div class="pix-info-item">
+                    <strong>Conta:</strong>
+                    <div class="copy-field">
+                      <input type="text" id="bank-account" value={bankAccount} readonly />
+                      <button class="btn-copy" onclick="copyBankAccount()">Copiar</button>
+                    </div>
+                  </div>
+
+                  <div class="pix-info-item">
+                    <strong>Titular:</strong>
+                    <span>{accountHolder}</span>
+                  </div>
+
+                  <div class="pix-info-item">
+                    <strong>Valor:</strong>
+                    <span class="highlight">{ebookPrice} Kz</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3>Envie o Comprovante</h3>
+              <p>Após fazer o pagamento, envie o comprovante:</p>
+
+              <form id="proof-form" enctype="multipart/form-data">
+                <div class="form-group">
+                  <label for="email">Seu Email *</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    placeholder="seu@email.com"
+                  />
+                  <small>Você receberá o acesso neste email</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="name">Seu Nome Completo *</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    required
+                    placeholder="Nome completo"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="proof">Comprovante de Pagamento *</label>
+                  <div class="file-upload">
+                    <input
+                      type="file"
+                      id="proof"
+                      name="proof"
+                      accept="image/*,.pdf"
+                      required
+                    />
+                    <div class="file-upload-text">
+                      <p>Clique para escolher arquivo</p>
+                      <small>Formatos aceitos: JPG, PNG, PDF (máx. 5MB)</small>
+                    </div>
+                  </div>
+                  <div id="file-name" class="file-name"></div>
+                </div>
+
+                <div id="message" class="message"></div>
+
+                <button type="submit" class="btn-primary btn-full" id="submit-btn">
+                  <span id="btn-text">Enviar Comprovante</span>
+                  <span id="spinner" class="spinner hidden"></span>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3>Aguarde a Aprovação</h3>
+              <p>
+                Verificaremos seu pagamento em até <strong>24 horas úteis</strong>.
+                Você receberá um email com as instruções de acesso assim que aprovado.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <h3>Precisa de ajuda?</h3>
+        <p>Email: <a href="mailto:seen85739@gmail.com"><strong>seen85739@gmail.com</strong></a></p>
+        <p>WhatsApp: <a href="https://wa.me/79961007408" target="_blank" class="whatsapp-link"><strong>+7 996 100 74 08</strong></a></p>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .payment-page {
+    min-height: 100vh;
+    padding: 4rem 0;
+    background: var(--bg-primary);
+  }
+
+  .payment-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 3rem;
+  }
+
+  .product-info {
+    background: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+    height: fit-content;
+    position: sticky;
+    top: 2rem;
+  }
+
+  .product-header {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .product-cover {
+    width: 100px;
+    height: auto;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px var(--shadow-color);
+  }
+
+  .product-details h1 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  .product-details p {
+    color: var(--text-tertiary);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .price-tag {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .price-label {
+    font-size: 0.9rem;
+    color: var(--text-tertiary);
+  }
+
+  .price-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--secondary);
+  }
+
+  .product-features h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .product-features ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .product-features li {
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  .payment-section {
+    background: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+  }
+
+  .back-button-container {
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+
+  .btn-back:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateX(-3px);
+  }
+
+  .payment-section h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: var(--text-primary);
+  }
+
+  .step {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .step:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .step-number {
+    width: 40px;
+    height: 40px;
+    background: var(--gradient-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .step-content {
+    flex: 1;
+  }
+
+  .step-content h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  .step-content p {
+    color: var(--text-tertiary);
+    margin-bottom: 1.5rem;
+  }
+
+  .pix-container {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 2rem;
+    background: var(--bg-primary);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .qr-code-placeholder {
+    text-align: center;
+  }
+
+  .qr-code-image {
+    width: 200px;
+    height: 200px;
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    object-fit: contain;
+    background: white;
+    padding: 0.5rem;
+  }
+
+  .qr-code-placeholder svg {
+    width: 200px;
+    height: 200px;
+    border: 2px dashed var(--border-color);
+    border-radius: 0.5rem;
+  }
+
+  .qr-note {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    margin-top: 0.5rem;
+  }
+
+  .pix-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .pix-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .pix-info-item strong {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+  }
+
+  .pix-info-item span {
+    color: var(--text-secondary);
+  }
+
+  .highlight {
+    color: var(--secondary);
+    font-weight: 700;
+    font-size: 1.2rem;
+  }
+
+  .copy-field {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .copy-field input {
+    flex: 1;
+    padding: 0.75rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    font-family: monospace;
+  }
+
+  .btn-copy {
+    padding: 0.75rem 1.5rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .btn-copy:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  input[type="email"],
+  input[type="text"] {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  small {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--text-tertiary);
+    font-size: 0.85rem;
+  }
+
+  .file-upload {
+    position: relative;
+    border: 2px dashed var(--border-color);
+    border-radius: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .file-upload:hover {
+    border-color: var(--primary);
+    background: var(--bg-primary);
+  }
+
+  .file-upload input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .file-upload-text p {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .file-name {
+    margin-top: 0.5rem;
+    color: var(--secondary);
+    font-weight: 500;
+  }
+
+  .message {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    display: none;
+  }
+
+  .message.error {
+    display: block;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid #ef4444;
+    color: #ef4444;
+  }
+
+  .message.success {
+    display: block;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid #22c55e;
+    color: #22c55e;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: var(--gradient-primary);
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px var(--shadow-hover);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px var(--shadow-hover);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .btn-full {
+    width: 100%;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spinner 0.6s linear infinite;
+  }
+
+  .spinner.hidden {
+    display: none;
+  }
+
+  @keyframes spinner {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .help-section {
+    text-align: center;
+    margin-top: 3rem;
+    padding: 2rem;
+    background: var(--bg-secondary);
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+  }
+
+  .help-section h3 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .help-section p {
+    color: var(--text-tertiary);
+    margin-bottom: 0.5rem;
+  }
+
+  .help-section a {
+    color: var(--secondary);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .help-section a:hover {
+    color: var(--primary);
+    text-decoration: underline;
+  }
+
+  .help-section strong {
+    color: var(--secondary);
+  }
+
+  .whatsapp-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(37, 211, 102, 0.1);
+    border: 1px solid rgba(37, 211, 102, 0.3);
+    border-radius: 0.5rem;
+    color: #25d366 !important;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+
+  .whatsapp-link:hover {
+    background: rgba(37, 211, 102, 0.2);
+    border-color: #25d366;
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+
+  .whatsapp-link strong {
+    color: #25d366 !important;
+  }
+
+  @media (max-width: 968px) {
+    .payment-container {
+      grid-template-columns: 1fr;
+    }
+
+    .product-info {
+      position: static;
+    }
+
+    .pix-container {
+      grid-template-columns: 1fr;
+    }
+
+    .qr-code-placeholder svg {
+      margin: 0 auto;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .payment-page {
+      padding: 2rem 0;
+    }
+
+    .product-header {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .product-cover {
+      margin: 0 auto;
+    }
+
+    .step {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<script>
+  function copyBankIBAN() {
+    const input = document.getElementById('bank-iban') as HTMLInputElement;
+    input.select();
+    document.execCommand('copy');
+
+    const btn = event?.target as HTMLButtonElement;
+    const originalText = btn.textContent;
+    btn.textContent = 'Copiado!';
+    btn.style.background = '#22c55e';
+
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.style.background = '';
+    }, 2000);
+  }
+
+  function copyBankAccount() {
+    const input = document.getElementById('bank-account') as HTMLInputElement;
+    input.select();
+    document.execCommand('copy');
+
+    const btn = event?.target as HTMLButtonElement;
+    const originalText = btn.textContent;
+    btn.textContent = 'Copiado!';
+    btn.style.background = '#22c55e';
+
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.style.background = '';
+    }, 2000);
+  }
+
+  // Preview do arquivo selecionado
+  const fileInput = document.getElementById('proof') as HTMLInputElement;
+  const fileName = document.getElementById('file-name');
+
+  fileInput?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+      fileName!.textContent = `Arquivo selecionado: ${file.name}`;
+    }
+  });
+
+  // Envio do formulário
+  const form = document.getElementById('proof-form') as HTMLFormElement;
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+  const btnText = document.getElementById('btn-text');
+  const spinner = document.getElementById('spinner');
+  const messageDiv = document.getElementById('message');
+
+  function showMessage(text: string, type: 'error' | 'success' = 'error') {
+    messageDiv!.textContent = text;
+    messageDiv!.className = `message ${type}`;
+  }
+
+  function setLoading(loading: boolean) {
+    if (loading) {
+      submitBtn.disabled = true;
+      btnText!.textContent = 'Enviando...';
+      spinner!.classList.remove('hidden');
+    } else {
+      submitBtn.disabled = false;
+      btnText!.textContent = 'Enviar Comprovante';
+      spinner!.classList.add('hidden');
+    }
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    messageDiv!.className = 'message';
+
+    const formData = new FormData(form);
+    const email = (document.getElementById('email') as HTMLInputElement).value;
+    const name = (document.getElementById('name') as HTMLInputElement).value;
+
+    try {
+      // Criar mensagem para WhatsApp
+      const whatsappMessage = `🔔 *Novo Comprovante de Pagamento*\n\n` +
+        `📧 Email: ${email}\n` +
+        `👤 Nome: ${name}\n` +
+        `💰 Produto: PINNs em Petrofísica\n` +
+        `💵 Valor: 9999 Kz\n\n` +
+        `Por favor, verificar o comprovante e liberar o acesso ao ebook.`;
+
+      const whatsappURL = `https://wa.me/79961007408?text=${encodeURIComponent(whatsappMessage)}`;
+
+      showMessage(
+        'Redirecionando para WhatsApp para enviar o comprovante...',
+        'success'
+      );
+
+      // Aguarda 1.5 segundos e redireciona para WhatsApp
+      setTimeout(() => {
+        window.open(whatsappURL, '_blank');
+        form.reset();
+        fileName!.textContent = '';
+        setLoading(false);
+        showMessage(
+          'Envie o comprovante pelo WhatsApp que abriu. Você receberá acesso em até 24h.',
+          'success'
+        );
+      }, 1500);
+
+    } catch (error) {
+      console.error('Erro:', error);
+      showMessage(error instanceof Error ? error.message : 'Erro ao processar solicitação', 'error');
+      setLoading(false);
+    }
+  });
+</script>

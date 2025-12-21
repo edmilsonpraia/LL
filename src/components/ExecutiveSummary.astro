@@ -1,0 +1,50 @@
+---
+interface Props {
+  title?: string;
+}
+
+const { title } = Astro.props;
+---
+
+<div class="executive-summary">
+  {title && <h3 class="summary-title">{title}</h3>}
+  <div class="summary-content">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .executive-summary {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(14, 165, 233, 0.15));
+    border: 2px solid var(--primary);
+    padding: 2rem;
+    border-radius: 0.75rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+  }
+
+  .summary-title {
+    color: var(--primary);
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .summary-content {
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .summary-content :global(h3),
+  .summary-content :global(h4) {
+    color: var(--primary);
+    margin-top: 1.5rem;
+  }
+
+  .summary-content :global(strong) {
+    color: var(--text-primary);
+  }
+</style>

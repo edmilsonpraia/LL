@@ -1,0 +1,689 @@
+---
+import Layout from '../layouts/Layout.astro';
+import crypto from 'crypto';
+
+// Configuração
+const adminPassword = import.meta.env.ADMIN_PASSWORD || 'admin123';
+const siteUrl = import.meta.env.SITE_URL || 'http://localhost:4326';
+
+// Função para criar hash do token de sessão
+function createSessionToken(password) {
+  return crypto.createHash('sha256').update(password + 'salt-admin-2024').digest('hex');
+}
+
+// Verifica cookie de autenticação
+const cookies = Astro.request.headers.get('cookie') || '';
+const sessionToken = cookies
+  .split(';')
+  .find(c => c.trim().startsWith('admin_session='))
+  ?.split('=')[1];
+
+const expectedToken = createSessionToken(adminPassword);
+let isAuthenticated = sessionToken === expectedToken;
+let loginError = '';
+
+// Processa o login
+if (Astro.request.method === 'POST' && !isAuthenticated) {
+  const formData = await Astro.request.formData();
+  const password = formData.get('password');
+
+  if (password === adminPassword) {
+    // Cria e define o cookie de sessão
+    const token = createSessionToken(adminPassword);
+    const sessionCookie = `admin_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400`;
+
+    // Define o cookie e redireciona
+    return new Response(null, {
+      status: 302,
+      headers: {
+        'Location': '/admin',
+        'Set-Cookie': sessionCookie
+      }
+    });
+  } else {
+    loginError = 'Senha incorreta!';
+  }
+}
+---
+
+<Layout title="Admin - Gerenciar Acessos">
+  <main class="admin-page">
+    <div class="container">
+      {!isAuthenticated ? (
+        <!-- Página de Login -->
+        <div class="login-container">
+          <div class="login-box">
+            <h1>🔐 Acesso Admin</h1>
+            <p>Digite a senha para acessar o painel administrativo</p>
+
+            {loginError && (
+              <div class="error-message">
+                ❌ {loginError}
+              </div>
+            )}
+
+            <form method="POST" class="login-form">
+              <div class="form-group">
+                <label for="password">Senha</label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  required
+                  autofocus
+                  placeholder="Digite a senha admin"
+                />
+              </div>
+
+              <button type="submit" class="btn-primary btn-full">
+                Entrar
+              </button>
+            </form>
+
+            <div class="login-note">
+              <p>💡 Dica: A senha está definida no arquivo .env como ADMIN_PASSWORD</p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <!-- Painel Admin -->
+        <div class="admin-container">
+          <div class="admin-header">
+            <h1>⚙️ Painel Administrativo</h1>
+            <a href="/admin/logout" class="btn-logout">Sair</a>
+          </div>
+
+          <div class="admin-content">
+            <!-- Gerador de Links -->
+            <section class="generator-section">
+              <h2>🔗 Gerar Link de Acesso</h2>
+              <p>Preencha os dados do cliente para gerar um link de acesso ao ebook</p>
+
+              <form id="generate-form" class="generator-form">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="email">Email do Cliente *</label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      required
+                      placeholder="cliente@example.com"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="days">Validade (dias)</label>
+                    <select id="days" name="days">
+                      <option value="30">30 dias</option>
+                      <option value="90">90 dias</option>
+                      <option value="180">180 dias</option>
+                      <option value="365" selected>1 ano (365 dias)</option>
+                      <option value="730">2 anos</option>
+                      <option value="3650">Vitalício (10 anos)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn-primary btn-full" id="generate-btn">
+                  <span id="btn-text">🔗 Gerar Link de Acesso</span>
+                  <span id="spinner" class="spinner hidden"></span>
+                </button>
+              </form>
+
+              <!-- Resultado -->
+              <div id="result" class="result-container hidden">
+                <div class="result-header">
+                  <h3>✅ Link Gerado com Sucesso!</h3>
+                </div>
+
+                <div class="result-info">
+                  <div class="info-item">
+                    <strong>📧 Email:</strong>
+                    <span id="result-email"></span>
+                  </div>
+                  <div class="info-item">
+                    <strong>⏱️ Validade:</strong>
+                    <span id="result-days"></span>
+                  </div>
+                  <div class="info-item">
+                    <strong>📅 Expira em:</strong>
+                    <span id="result-expiry"></span>
+                  </div>
+                </div>
+
+                <div class="link-container">
+                  <label>🔗 Link de Acesso:</label>
+                  <div class="link-copy">
+                    <input type="text" id="access-link" readonly />
+                    <button class="btn-copy" onclick="copyLink()">Copiar</button>
+                  </div>
+                </div>
+
+                <div class="whatsapp-send">
+                  <button class="btn-whatsapp" onclick="sendViaWhatsApp()">
+                    📱 Enviar via WhatsApp
+                  </button>
+                </div>
+
+                <div class="instructions">
+                  <h4>📋 Instruções para o Cliente:</h4>
+                  <ol>
+                    <li>Envie o link acima para o cliente</li>
+                    <li>O cliente clica no link</li>
+                    <li>O acesso é liberado automaticamente</li>
+                    <li>Um cookie será salvo para acesso futuro</li>
+                  </ol>
+                </div>
+              </div>
+            </section>
+
+            <!-- Estatísticas (placeholder) -->
+            <section class="stats-section">
+              <h2>📊 Estatísticas</h2>
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <div class="stat-icon">👥</div>
+                  <div class="stat-value">-</div>
+                  <div class="stat-label">Total de Acessos</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon">🔗</div>
+                  <div class="stat-value">-</div>
+                  <div class="stat-label">Links Gerados</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon">💰</div>
+                  <div class="stat-value">-</div>
+                  <div class="stat-label">Vendas Hoje</div>
+                </div>
+              </div>
+              <p class="stats-note">💡 Para estatísticas reais, considere integrar Google Analytics</p>
+            </section>
+          </div>
+        </div>
+      )}
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .admin-page {
+    min-height: 100vh;
+    background: var(--bg-primary);
+    padding: 2rem 0;
+  }
+
+  /* Login Styles */
+  .login-container {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .login-box {
+    background: var(--bg-secondary);
+    padding: 3rem;
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+    max-width: 450px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .login-box h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .login-box > p {
+    color: var(--text-tertiary);
+    margin-bottom: 2rem;
+  }
+
+  .login-form {
+    text-align: left;
+  }
+
+  .error-message {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid #ef4444;
+    border-radius: 0.5rem;
+    color: #ef4444;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .login-note {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+
+  .login-note p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  /* Admin Panel Styles */
+  .admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+  }
+
+  .admin-header h1 {
+    font-size: 2rem;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .btn-logout {
+    padding: 0.75rem 1.5rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .btn-logout:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: white;
+  }
+
+  .admin-content {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .generator-section,
+  .stats-section {
+    background: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+  }
+
+  .generator-section h2,
+  .stats-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  .generator-section > p {
+    color: var(--text-tertiary);
+    margin-bottom: 2rem;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  input[type="email"],
+  input[type="password"],
+  input[type="text"],
+  select {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+  }
+
+  input:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: var(--gradient-primary);
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px var(--shadow-hover);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .btn-full {
+    width: 100%;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spinner 0.6s linear infinite;
+  }
+
+  .spinner.hidden {
+    display: none;
+  }
+
+  @keyframes spinner {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .result-container {
+    margin-top: 2rem;
+    padding: 2rem;
+    background: var(--bg-primary);
+    border-radius: 0.75rem;
+    border: 2px solid var(--primary);
+  }
+
+  .result-container.hidden {
+    display: none;
+  }
+
+  .result-header h3 {
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+  }
+
+  .result-info {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .info-item {
+    display: flex;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+  }
+
+  .info-item strong {
+    color: var(--text-primary);
+    min-width: 120px;
+  }
+
+  .link-container {
+    margin-bottom: 1.5rem;
+  }
+
+  .link-container label {
+    margin-bottom: 0.75rem;
+  }
+
+  .link-copy {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .link-copy input {
+    flex: 1;
+    font-family: monospace;
+    font-size: 0.9rem;
+  }
+
+  .btn-copy {
+    padding: 0.75rem 1.5rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+  }
+
+  .btn-copy:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+  }
+
+  .whatsapp-send {
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-whatsapp {
+    width: 100%;
+    padding: 1rem;
+    background: rgba(37, 211, 102, 0.1);
+    border: 2px solid rgba(37, 211, 102, 0.3);
+    border-radius: 0.5rem;
+    color: #25d366;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .btn-whatsapp:hover {
+    background: rgba(37, 211, 102, 0.2);
+    border-color: #25d366;
+    transform: translateY(-2px);
+  }
+
+  .instructions {
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+  }
+
+  .instructions h4 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+  }
+
+  .instructions ol {
+    color: var(--text-secondary);
+    padding-left: 1.5rem;
+  }
+
+  .instructions li {
+    margin-bottom: 0.5rem;
+  }
+
+  /* Stats */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-card {
+    padding: 1.5rem;
+    background: var(--bg-primary);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+    text-align: center;
+  }
+
+  .stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-label {
+    color: var(--text-tertiary);
+    font-size: 0.9rem;
+  }
+
+  .stats-note {
+    color: var(--text-tertiary);
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    .login-box {
+      padding: 2rem;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .admin-header {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+    }
+  }
+</style>
+
+<script define:vars={{ siteUrl }}>
+  const form = document.getElementById('generate-form');
+  const resultDiv = document.getElementById('result');
+  const btnText = document.getElementById('btn-text');
+  const spinner = document.getElementById('spinner');
+  const generateBtn = document.getElementById('generate-btn');
+
+  let currentLink = '';
+  let currentEmail = '';
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value;
+    const days = document.getElementById('days').value;
+
+    // Mostra loading
+    generateBtn.disabled = true;
+    btnText.textContent = 'Gerando...';
+    spinner.classList.remove('hidden');
+    resultDiv.classList.add('hidden');
+
+    try {
+      const response = await fetch('/api/generate-link', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, days: parseInt(days) }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao gerar link');
+      }
+
+      // Preenche os dados do resultado
+      currentLink = data.link;
+      currentEmail = email;
+
+      document.getElementById('result-email').textContent = email;
+      document.getElementById('result-days').textContent = `${days} dias`;
+      document.getElementById('result-expiry').textContent = new Date(data.expiryDate).toLocaleString('pt-BR');
+      document.getElementById('access-link').value = data.link;
+
+      // Mostra o resultado
+      resultDiv.classList.remove('hidden');
+
+      // Limpa o formulário
+      form.reset();
+    } catch (error) {
+      alert('Erro ao gerar link: ' + error.message);
+    } finally {
+      generateBtn.disabled = false;
+      btnText.textContent = '🔗 Gerar Link de Acesso';
+      spinner.classList.add('hidden');
+    }
+  });
+
+  function copyLink() {
+    const input = document.getElementById('access-link');
+    input.select();
+    document.execCommand('copy');
+
+    const btn = event.target;
+    const originalText = btn.textContent;
+    btn.textContent = 'Copiado!';
+    btn.style.background = '#22c55e';
+
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.style.background = '';
+    }, 2000);
+  }
+
+  function sendViaWhatsApp() {
+    const message = `Olá! 👋\n\n` +
+      `Seu pagamento foi confirmado! 🎉\n\n` +
+      `Aqui está seu link de acesso ao ebook "PINNs em Petrofísica":\n\n` +
+      `${currentLink}\n\n` +
+      `✅ Basta clicar no link para ter acesso imediato\n` +
+      `✅ O acesso é vitalício\n` +
+      `✅ Você pode acessar de qualquer dispositivo\n\n` +
+      `Aproveite seus estudos! 📚`;
+
+    const whatsappURL = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(whatsappURL, '_blank');
+  }
+
+  // Torna as funções globais
+  window.copyLink = copyLink;
+  window.sendViaWhatsApp = sendViaWhatsApp;
+</script>

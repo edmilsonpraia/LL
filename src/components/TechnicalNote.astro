@@ -1,0 +1,62 @@
+---
+interface Props {
+  type?: 'info' | 'warning' | 'important';
+}
+
+const { type = 'info' } = Astro.props;
+
+const typeStyles = {
+  info: {
+    bg: 'rgba(59, 130, 246, 0.1)',
+    border: '#3b82f6',
+    color: '#1e40af'
+  },
+  warning: {
+    bg: 'rgba(251, 191, 36, 0.1)',
+    border: '#fbbf24',
+    color: '#92400e'
+  },
+  important: {
+    bg: 'rgba(220, 38, 38, 0.1)',
+    border: '#dc2626',
+    color: '#991b1b'
+  }
+};
+
+const style = typeStyles[type];
+---
+
+<div class="technical-note" data-type={type}>
+  <slot />
+</div>
+
+<style define:vars={{ bg: style.bg, border: style.border, color: style.color }}>
+  .technical-note {
+    background: var(--bg);
+    border-left: 4px solid var(--border);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .technical-note :global(p) {
+    color: var(--text-secondary);
+    margin: 0.5rem 0;
+  }
+
+  .technical-note :global(strong) {
+    color: var(--color);
+    font-weight: 600;
+  }
+
+  .technical-note :global(ul),
+  .technical-note :global(ol) {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+  }
+
+  .technical-note :global(li) {
+    color: var(--text-secondary);
+    margin: 0.3rem 0;
+  }
+</style>

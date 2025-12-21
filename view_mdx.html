@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PINNs em Petrofísica</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 2em;
+            border-left: 5px solid #3498db;
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .author-info {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        .author-info p {
+            margin: 5px 0;
+            font-weight: bold;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .equation {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .highlight-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .insight-box {
+            background: #d1ecf1;
+            border-left: 5px solid #17a2b8;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .conclusion-box {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .image-placeholder {
+            background: #e9ecef;
+            border: 2px dashed #6c757d;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        pre code {
+            background: none;
+            color: #ecf0f1;
+        }
+
+        .toc {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        .toc h3 {
+            margin-top: 0;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .toc li {
+            margin: 8px 0;
+        }
+
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        .reference {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PINNs em Petrofísica e a Integração entre Deep Learning e Equações de Rocha</h1>
+
+        <div class="author-info">
+            <p>Autor: Edmilson Delfim Praia</p>
+            <p>Co-autor: Cirilo Cauxeiro</p>
+        </div>
+
+        <div class="toc">
+            <h3>Índice</h3>
+            <ul>
+                <li><a href="#introducao">Introdução</a></li>
+                <li><a href="#formulacao">Formulação Matemática das Equações</a></li>
+                <li><a href="#estrutura">Estrutura das Redes Neurais</a></li>
+                <li><a href="#metodologia">Metodologia e Execução</a></li>
+                <li><a href="#resultados">Resultados e Análise</a></li>
+                <li><a href="#debate">Debate e Aplicações Práticas</a></li>
+                <li><a href="#conclusoes">Conclusões e Perspectivas Futuras</a></li>
+                <li><a href="#referencias">Referências</a></li>
+            </ul>
+        </div>
+
+        <h2 id="introducao">INTRODUÇÃO</h2>
+
+        <p>Em análise e caracterização de reservatórios de petróleo e gás, constitui um problema inverso mal-posto (<em>ill-posed inverse problem</em>). A partir de algumas análises e observações em dados geofísicos -- perfis de poços como as curvas de densidade RHOB, tempo de trânsito sônico DT e raios gama GR, foi possível inferir propriedades petrofísicas cruciais como a porosidade (ϕ), que são indicadores de rocha reservatório que podem indicar a possibilidade de ter um volume de hidrocarbonetos <em>in-situ</em> e sua produtividade.</p>
+
+        <p>O avanço do Aprendizado Profundo (<em>Deep Learning</em>) trouxe uma nova maneira de pensar. As Redes Neurais, por exemplo, têm a capacidade teórica de aprender qualquer relacionamento não linear e contínuo entre as medições feitas no poço e as propriedades da rocha, graças ao que é conhecido como <strong>Teorema da Aproximação Universal</strong>.</p>
+
+        <div class="highlight-box">
+            <p><strong>As Redes Neurais Informadas por Física (PINNs)</strong> - <em>Physics-Informed Neural Networks</em>, foram criadas por <strong>Raissi, Perdikaris e Karniadakis em 2019</strong>. Surgem como tentativa de juntar duas ideias diferentes: o aprendizado de máquina e o conhecimento das leis físicas.</p>
+        </div>
+
+        <h2 id="formulacao">FORMULAÇÃO MATEMÁTICA DAS EQUAÇÕES FORMATIVAS EM PETROFÍSICA</h2>
+
+        <h3>Para estimar a porosidade (ϕ), três das equações mais essenciais são:</h3>
+
+        <div class="equation">
+            <h4>1. Equação de Densidade:</h4>
+            <p>φ = (ρ_ma - ρ_b) / (ρ_ma - ρ_fl)</p>
+            <p style="font-size: 0.9em; color: #666;">Onde ρ_ma e ρ_fl são parâmetros que devem ser considerados com base no entendimento da litologia e do tipo de fluido.</p>
+        </div>
+
+        <div class="equation">
+            <h4>2. Equação do Tempo de Trânsito de Wyllie:</h4>
+            <p>φ = (Δt - Δt_ma) / (Δt_fl - Δt_ma)</p>
+            <p style="font-size: 0.9em; color: #666;">Esta equação funciona bem em formações consolidadas e com porosidade intergranular, mas é notoriamente imprecisa em rochas com fraturas ou porosidade secundária.</p>
+        </div>
+
+        <div class="equation">
+            <h4>3. Equação de Gardner:</h4>
+            <p>ρ_b = a * V_p^b</p>
+            <p style="font-size: 0.9em; color: #666;">Onde a e b são constantes empíricas.</p>
+        </div>
+
+        <h2 id="estrutura">ESTRUTURA DAS REDES NEURAIS E FORMULAÇÃO PINN</h2>
+
+        <div class="image-placeholder">
+            <p>📊 Figura 2: Representação técnica da arquitetura PINN para a integração petrofísica</p>
+        </div>
+
+        <p>Em nossa pesquisa, a arquitetura da rede neural para o poço Euler foi composta por uma rede densa com quatro camadas ocultas (128, 64, 32 e 16 neurônios, respectivamente) e uma camada de saída com um único neurônio para prever a porosidade (NPHI).</p>
+
+        <h2 id="metodologia">METODOLOGIA E EXECUÇÃO</h2>
+
+        <h3>A Representação Matemática das PINNs</h3>
+
+        <div class="equation">
+            <p><strong>Função de Perda Híbrida:</strong></p>
+            <p>L(θ) = L_dados(θ) + λ * L_fisica(θ)</p>
+        </div>
+
+        <p>Onde:</p>
+        <ul>
+            <li>θ são os parâmetros da rede (os pesos e bias das camadas)</li>
+            <li>L_dados é a função de perda clássica dos dados (MSE)</li>
+            <li>L_fisica é o resíduo da equação diferencial parcial (EDP)</li>
+            <li>λ é o hiperparâmetro de balanceamento</li>
+        </ul>
+
+        <h2 id="resultados">RESULTADOS E ANÁLISE</h2>
+
+        <h3>Desempenho no Conjunto de Teste: Uma Comparação Quantitativa</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Modelo</th>
+                    <th>R²</th>
+                    <th>RMSE</th>
+                    <th>MAE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Física Pura</td>
+                    <td>0.8546</td>
+                    <td>0.0525</td>
+                    <td>0.0410</td>
+                </tr>
+                <tr style="background-color: #d4edda;">
+                    <td><strong>NN Pura</strong></td>
+                    <td><strong>0.9573</strong></td>
+                    <td><strong>0.0267</strong></td>
+                    <td><strong>0.0192</strong></td>
+                </tr>
+                <tr>
+                    <td>PINN</td>
+                    <td>0.8883</td>
+                    <td>0.0456</td>
+                    <td>0.0348</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="insight-box">
+            <h4>INSIGHT-BOX: Em termos financeiros, o que representa esse R²?</h4>
+            <ul>
+                <li><strong>R² = 0.26 (Física Pura):</strong> erro de volume de ~15 milhões de barris (alto risco)</li>
+                <li><strong>R² = 0.96 (NN Pura):</strong> erro de volume de ~3 milhões de barris (baixo risco)</li>
+                <li><strong>MELHORIA:</strong> Aumento de 270% no R² = diminuição de 80% na probabilidade de erro</li>
+            </ul>
+        </div>
+
+        <h3>O Paradoxo da PINN</h3>
+
+        <div class="highlight-box">
+            <p><strong>Descoberta Chave:</strong> A PINN não estava utilizando a física de forma eficaz, mas sim a estava combatendo. A rede aprendeu a ignorar a restrição física inadequada para aumentar sua capacidade de se ajustar às observações.</p>
+        </div>
+
+        <h2 id="debate">DEBATE E APLICAÇÕES PRÁTICAS</h2>
+
+        <h3>Lições Aprendidas</h3>
+
+        <ol>
+            <li><strong>A Qualidade dos Dados Prevalece sobre a Quantidade:</strong> A consistência dos dados é um indicador de sucesso mais robusto do que a quantidade de dados.</li>
+            <li><strong>A Densidade (RHOB) é a Variável Crítica:</strong> Para prever a porosidade com precisão, é essencial medir a densidade com qualidade.</li>
+            <li><strong>Física Inadequada é Prejudicial:</strong> Forçar um modelo a se adaptar a uma abordagem física excessivamente simplista pode comprometer seu desempenho.</li>
+            <li><strong>NN Pura Pode Superar PINNs:</strong> Em situações com dados de alta qualidade, uma rede neural pura é capaz de aprender a física de forma implícita.</li>
+        </ol>
+
+        <div class="insight-box">
+            <h4>ROI Esperado:</h4>
+            <p>Redução de custos de <strong>US$ 2-5M por ano</strong> em decisões de desenvolvimento de campo.</p>
+        </div>
+
+        <h2 id="conclusoes">CONCLUSÕES E PERSPECTIVAS FUTURAS</h2>
+
+        <div class="conclusion-box">
+            <p><strong>Conclusão Principal:</strong> Quando se dispõem de dados de alta qualidade, uma abordagem de Deep Learning puramente orientada a dados pode superar tanto os modelos tradicionais de física de rocha quanto as abordagens híbridas, como as PINNs, especialmente quando o modelo físico explícito simplifica a realidade.</p>
+        </div>
+
+        <h3>Limitações Reconhecidas:</h3>
+        <ol>
+            <li><strong>Generalização Litológica:</strong> O modelo foi treinado unicamente em arenitos quartzo-feldspáticos provenientes de um ambiente turbidítico.</li>
+            <li><strong>Intervalo de Dados:</strong> O modelo é considerado confiável dentro do intervalo de valores observado durante o treinamento (0,05 e 0,45 v/v).</li>
+            <li><strong>Condições de Poço:</strong> O modelo considera condições de poço perfeitas.</li>
+        </ol>
+
+        <h3>Perspectivas para Pesquisas Futuras:</h3>
+        <ul>
+            <li>Incorporação de Física Mais Avançada</li>
+            <li>Quantificação de Incerteza com Redes Neuronais Bayesianas</li>
+            <li>Automação e AutoML</li>
+            <li>Integração Multimodal de Dados</li>
+        </ul>
+
+        <h2 id="referencias">REFERÊNCIAS</h2>
+
+        <div class="reference">
+            <ol>
+                <li>Raissi, M., Perdikaris, P., & Karniadakis, G. E. (2019). Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations. <em>Journal of Computational Physics</em>, 378, 686-707.</li>
+                <li>Wang, S., et al. (2023). An Expert's Guide to Training Physics-informed Neural Networks. arXiv:2308.08468.</li>
+                <li>Li, P., Liu, M., Alfarraj, M., Tahmasebi, P., & Grana, D. (2024). Probabilistic physics-informed neural network for seismic petrophysical inversion. <em>Geophysics</em>, 89(2).</li>
+                <li>Han, J. X., et al. (2023). Physics-informed neural network-based petroleum reservoir simulation with sparse data using domain decomposition. <em>Petroleum Science</em>, 20(5).</li>
+                <li>Shao, R., et al. (2024). Reservoir evaluation using petrophysics informed machine learning. <em>Geoenergy Science and Engineering</em>, 234.</li>
+                <li>Wyllie, M. R. J., Gregory, A. R., & Gardner, L. W. (1956). Elastic wave velocities in heterogeneous and porous media. <em>Geophysics</em>, 21(1), 41-70.</li>
+                <li>Gardner, G. H. F., Gardner, L. W., & Gregory, A. R. (1974). Formation velocity and density---The diagnostic basics for stratigraphic traps. <em>Geophysics</em>, 39(6), 770-780.</li>
+                <li>Mavko, G., Mukerji, T., & Dvorkin, J. (2020). <em>The Rock Physics Handbook</em>. Cambridge University Press.</li>
+                <li>Cuomo, S., et al. (2022). Scientific machine learning through physics--informed neural networks: Where we are and what's next. <em>Journal of Scientific Computing</em>, 92(3), 88.</li>
+                <li>Al-Mudhafar, W. J. (2022). A comprehensive review of the application of artificial intelligence in the oil and gas industry. <em>Journal of Petroleum Exploration and Production Technology</em>, 12(11), 3099-3121.</li>
+            </ol>
+        </div>
+
+        <hr style="margin: 40px 0;">
+
+        <p style="text-align: center; color: #666; margin-top: 40px;">
+            <strong>Implementação Completa Disponível em:</strong><br>
+            <code>C:\Users\user\Desktop\PINNs\pinns_petroleo\</code>
+        </p>
+    </div>
+
+    <script>
+        // Smooth scrolling para links internos
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Adicionar botão de voltar ao topo
+        const backToTop = document.createElement('button');
+        backToTop.innerHTML = '↑ Topo';
+        backToTop.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+            z-index: 1000;
+            font-size: 14px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        `;
+
+        document.body.appendChild(backToTop);
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.style.display = 'block';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+</body>
+</html>

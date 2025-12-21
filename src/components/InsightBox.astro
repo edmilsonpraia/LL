@@ -1,0 +1,41 @@
+---
+interface Props {
+  title?: string;
+}
+
+const { title } = Astro.props;
+---
+
+<div class="insight-box">
+  {title && <h3 class="insight-title">{title}</h3>}
+  <div class="insight-content">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .insight-box {
+    background: rgba(59, 130, 246, 0.1);
+    border-left: 4px solid var(--primary);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .insight-title {
+    color: var(--primary);
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+
+  .insight-content {
+    color: var(--text-secondary);
+  }
+
+  .insight-content :global(h3),
+  .insight-content :global(h4) {
+    color: var(--primary);
+    margin-top: 1rem;
+  }
+</style>
