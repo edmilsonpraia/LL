@@ -67,7 +67,7 @@ const accountHolder = 'Edmilson Delfim Praia';
                     <strong>IBAN:</strong>
                     <div class="copy-field">
                       <input type="text" id="bank-iban" value={bankIBAN} readonly />
-                      <button class="btn-copy" onclick="copyBankIBAN()">Copiar</button>
+                      <button class="btn-copy" id="copy-iban-btn">Copiar</button>
                     </div>
                   </div>
 
@@ -75,7 +75,7 @@ const accountHolder = 'Edmilson Delfim Praia';
                     <strong>Conta:</strong>
                     <div class="copy-field">
                       <input type="text" id="bank-account" value={bankAccount} readonly />
-                      <button class="btn-copy" onclick="copyBankAccount()">Copiar</button>
+                      <button class="btn-copy" id="copy-account-btn">Copiar</button>
                     </div>
                   </div>
 
@@ -682,71 +682,47 @@ const accountHolder = 'Edmilson Delfim Praia';
 </style>
 
 <script>
-  async function copyBankIBAN() {
+  // Função auxiliar para copiar texto
+  async function copyToClipboard(text: string, button: HTMLButtonElement) {
+    try {
+      // Tenta usar a API moderna do Clipboard
+      await navigator.clipboard.writeText(text);
+
+      // Feedback visual de sucesso
+      const originalText = button.textContent;
+      button.textContent = '✓ Copiado!';
+      button.style.background = '#22c55e';
+      button.style.color = 'white';
+      button.style.borderColor = '#22c55e';
+
+      setTimeout(() => {
+        button.textContent = originalText;
+        button.style.background = '';
+        button.style.color = '';
+        button.style.borderColor = '';
+      }, 2000);
+    } catch (err) {
+      console.error('Erro ao copiar:', err);
+      button.textContent = '✗ Erro';
+      setTimeout(() => {
+        button.textContent = 'Copiar';
+      }, 2000);
+    }
+  }
+
+  // Event listener para copiar IBAN
+  const copyIbanBtn = document.getElementById('copy-iban-btn');
+  copyIbanBtn?.addEventListener('click', () => {
     const input = document.getElementById('bank-iban') as HTMLInputElement;
-    const btn = (window.event?.target as HTMLButtonElement) || document.activeElement as HTMLButtonElement;
+    copyToClipboard(input.value, copyIbanBtn as HTMLButtonElement);
+  });
 
-    try {
-      // Usa a API moderna do Clipboard
-      await navigator.clipboard.writeText(input.value);
-
-      // Feedback visual
-      const originalText = btn.textContent;
-      btn.textContent = '✓ Copiado!';
-      btn.style.background = '#22c55e';
-      btn.style.color = 'white';
-      btn.style.borderColor = '#22c55e';
-
-      setTimeout(() => {
-        btn.textContent = originalText;
-        btn.style.background = '';
-        btn.style.color = '';
-        btn.style.borderColor = '';
-      }, 2000);
-    } catch (err) {
-      // Fallback para navegadores antigos
-      input.select();
-      document.execCommand('copy');
-      btn.textContent = '✓ Copiado!';
-
-      setTimeout(() => {
-        btn.textContent = 'Copiar';
-      }, 2000);
-    }
-  }
-
-  async function copyBankAccount() {
+  // Event listener para copiar Conta
+  const copyAccountBtn = document.getElementById('copy-account-btn');
+  copyAccountBtn?.addEventListener('click', () => {
     const input = document.getElementById('bank-account') as HTMLInputElement;
-    const btn = (window.event?.target as HTMLButtonElement) || document.activeElement as HTMLButtonElement;
-
-    try {
-      // Usa a API moderna do Clipboard
-      await navigator.clipboard.writeText(input.value);
-
-      // Feedback visual
-      const originalText = btn.textContent;
-      btn.textContent = '✓ Copiado!';
-      btn.style.background = '#22c55e';
-      btn.style.color = 'white';
-      btn.style.borderColor = '#22c55e';
-
-      setTimeout(() => {
-        btn.textContent = originalText;
-        btn.style.background = '';
-        btn.style.color = '';
-        btn.style.borderColor = '';
-      }, 2000);
-    } catch (err) {
-      // Fallback para navegadores antigos
-      input.select();
-      document.execCommand('copy');
-      btn.textContent = '✓ Copiado!';
-
-      setTimeout(() => {
-        btn.textContent = 'Copiar';
-      }, 2000);
-    }
-  }
+    copyToClipboard(input.value, copyAccountBtn as HTMLButtonElement);
+  });
 
   // Preview do arquivo selecionado
   const fileInput = document.getElementById('proof') as HTMLInputElement;
