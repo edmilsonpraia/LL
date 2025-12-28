@@ -46,9 +46,6 @@
         },
         "cover": {
           "type": "string"
-        },
-        "$schema": {
-          "type": "string"
         }
       },
       "required": [
