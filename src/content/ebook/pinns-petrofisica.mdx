@@ -13,7 +13,7 @@ tags: ["PINNs", "Deep Learning", "Petrofísica", "Machine Learning", "Porosidade
 **Autor:** Edmilson Delfim Praia
 **Co-autor:** Cirilo Cauxeiro
 
-## INTRODUÇÃO
+## INTRODUÇÃO {#introducao}
 
 Em análise e caracterização de reservatórios de petróleo e gás, constitui um problema inverso mal- posto ( *ill-posed inverse problem*). A partir de algumas análises e observações em dados geofíscos -- perfis de poços como as curvas de densidade RHOB, tempo de trânsito sónico DT e raios gama GR, foi possível inferir propriedades petrofísicas crucias como a porosidade (*ϕ),* que são indicadores de rocha reservatório que podem indicar a possibilidade de ter um volume de hidrocarbornetos *in-situ* e sua produtividade. Em modelos de física de rocha, é evidente de que a natureza não é a única instável desta inversão que são na sua essência, correlações empíricas ou semi-empiricas com um domínio de validade restrito [8].
 
@@ -23,7 +23,7 @@ As Redes Neurais Informadas por Física conhecidas como PINNs (*Physics-Informed
 
 A ideia principal é que, ao incluir as equações que descrevem a física do problema, como as equações diferenciais parciais (*EDPs*) na própria função de perda da rede neural, podemos limitar as possíveis soluções, fazer com que o modelo seja mais confiável e obter previsões que façam sentido do ponto de vista físico, mesmo quando temos poucos dados disponíveis. Este estudo analisa essa ideia de forma crítica, especialmente no caso de prever porosidade, usando um conjunto de dados reais do Campo EDP em Angola.
 
-## FORMULAÇÃO MATEMÁTICA DAS EQUAÇÕES FORMATIVAS EM PETROFÍSICA
+## FORMULAÇÃO MATEMÁTICA DAS EQUAÇÕES FORMATIVAS EM PETROFÍSICA {#fundamentos}
 
 Para entender a inovação introduzida pelas PINNs, é essencial reexaminar os princípios matemáticos dos modelos de física de rocha que sustentam a análise de perfis de poço. Essas equações refletem a tentativa de representar as intrincadas conexões entre as medições geofísicas e as características da rocha com expressões matemáticas fundamentadas em observações empíricas e leis da física simplificados.
 
@@ -74,7 +74,7 @@ Em nossa pesquisa, a arquitetura da rede neural para o poço Euler foi composta 
 
 **Figura 3:** Estrutura da rede neural empregada para o poço de Euler. As quatro características de entrada são processadas por quatro camadas ocultas para gerar a predição de porosidade. A configuração e os resultados do desempenho (R²=0,9573) são descritos em detalhes.
 
-## METODOLOGIA E EXECUÇÃO
+## METODOLOGIA E EXECUÇÃO {#implementacao}
 
 **\
 A Representação Matemática das PINNs**
@@ -163,7 +163,7 @@ $$RMSE = \sqrt{\frac{1}{N}\sum_{i = 1}^{N}\left( y_{i}^{obs} - y_{i}^{pred} \rig
 
 Foram criados gráficos de dispersão (Previsto vs. Observado) para oferecer uma interpretação visual direta das capacidades de predição.
 
-## RESULTADOS E ANÁLISE
+## RESULTADOS E ANÁLISE {#estudos-caso}
 
 **Desempenho no Conjunto de Teste: Uma Comparação Quantitativa**
 
@@ -365,7 +365,7 @@ As curvas de PINN mostram:
 
 Esta análise demonstra que a transparência e a interpretabilidade das redes neurais não são impossíveis de serem alcançadas. Com as ferramentas apropriadas (SHAP, correlação, curvas de aprendizagem), é possível abrir a caixa-preta e entender o que a rede está aprendendo.
 
-## DEBATE E APLICAÇÕES PRÁTICAS
+## DEBATE E APLICAÇÕES PRÁTICAS {#aplicacoes}
 
 **Uma Heurística para a Seleção de Modelos: A Árvore de Decisão**
 
