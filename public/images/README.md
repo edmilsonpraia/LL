@@ -1,31 +1,69 @@
-# Pasta de Imagens do Ebook
+# Estrutura de Imagens dos Ebooks
 
-Esta pasta é onde você deve colocar todas as imagens que serão usadas no ebook.
+Esta pasta contém as imagens organizadas por ebook.
 
-## Como adicionar imagens
+## 📁 Organização
 
-1. Coloque seus arquivos de imagem (PNG, JPG, SVG, etc.) nesta pasta
-2. No arquivo MDX do ebook, referencie as imagens assim:
-
-```mdx
-![Descrição da imagem](/images/nome-da-imagem.png)
+```
+/public/images/
+├── pinns-petrofisica/      # Imagens do ebook PINNs em Petrofísica
+│   ├── cover.png           # Capa do ebook
+│   ├── Picture1.png        # Imagens do conteúdo
+│   ├── Picture2.png
+│   └── ...
+├── novo-ebook/             # Imagens de um novo ebook (exemplo)
+│   ├── cover.png
+│   ├── imagem1.png
+│   └── ...
+└── QR.jpeg                 # QR Code do pagamento (global)
 ```
 
-## Exemplo
+## 🎯 Como Adicionar um Novo Ebook
 
-Se você adicionar uma imagem chamada `diagrama.png` nesta pasta, use no MDX:
+### 1. Criar Pasta de Imagens
 
-```mdx
-![Diagrama da arquitetura](/images/diagrama.png)
+```bash
+mkdir public/images/nome-do-ebook
 ```
 
-## Formatos suportados
+### 2. Adicionar Imagens
 
-- PNG
-- JPG/JPEG
-- SVG
-- GIF
-- WebP
+- Coloque a capa como `cover.png`
+- Coloque as imagens do conteúdo (podem ter qualquer nome)
+
+### 3. Criar Arquivo MDX
+
+- Copie o template: `src/content/ebook/TEMPLATE-novo-ebook.mdx`
+- Renomeie para: `src/content/ebook/nome-do-ebook.mdx`
+- Edite o frontmatter e conteúdo
+
+### 4. Referenciar Imagens no MDX
+
+```markdown
+![Descrição da imagem](/images/nome-do-ebook/imagem1.png)
+```
+
+### 5. Atualizar Referências na Página de Pagamento (se necessário)
+
+Se quiser usar este ebook na página de pagamento:
+
+```astro
+<img src="/images/nome-do-ebook/cover.png" alt="Capa" />
+```
+
+## 🚀 Acessar o Ebook
+
+O ebook estará disponível em:
+```
+https://seusite.com/ebook/nome-do-ebook
+```
+
+## 📝 Notas
+
+- **Imagens globais** (como QR.jpeg para pagamento) ficam diretamente em `/images/`
+- **Imagens específicas de ebook** ficam em `/images/nome-do-ebook/`
+- Sempre use caminhos absolutos começando com `/images/...`
+- Formatos suportados: PNG, JPG, JPEG, GIF, WebP, SVG
 
 ## Dicas
 

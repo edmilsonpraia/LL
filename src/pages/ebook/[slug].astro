@@ -1,0 +1,410 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { checkAccess, createAccessCookie } from '../../lib/auth.js';
+import { getEntry, getCollection } from 'astro:content';
+
+// Pega o slug do parâmetro da URL
+const { slug } = Astro.params;
+
+// Verifica se o usuário tem acesso
+const accessData = checkAccess(Astro.request);
+
+// Se tem token na URL válido, define o cookie para próximas visitas
+const url = new URL(Astro.request.url);
+const tokenFromUrl = url.searchParams.get('token');
+
+if (tokenFromUrl && accessData) {
+  // Token válido na URL, define o cookie (mas não redireciona, mostra o conteúdo direto)
+  const cookie = createAccessCookie(tokenFromUrl);
+  Astro.response.headers.set('Set-Cookie', cookie);
+}
+
+// Verifica se tem acesso (token na URL ou cookie)
+if (!accessData) {
+  // Sem acesso - redireciona para a página inicial
+  return Astro.redirect('/?access=denied');
+}
+
+const email = accessData.email;
+
+// Carrega o conteúdo MDX do ebook baseado no slug
+const ebookEntry = await getEntry('ebook', slug);
+
+// Se o ebook não existe, retorna 404
+if (!ebookEntry) {
+  return Astro.redirect('/404');
+}
+
+const { Content } = await ebookEntry.render();
+const ebookTitle = ebookEntry.data.title || 'Ebook';
+
+// Função para gerar links de navegação dinamicamente (se o ebook tiver)
+export async function getStaticPaths() {
+  const ebooks = await getCollection('ebook');
+  return ebooks.map(ebook => ({
+    params: { slug: ebook.slug }
+  }));
+}
+---
+
+<Layout title={`${ebookTitle} - Ebook Completo`}>
+  <main class="ebook-page">
+    <div class="container">
+      <!-- Header do Ebook -->
+      <header class="ebook-header">
+        <div class="welcome-message">
+          <h1>Bem-vindo ao Ebook!</h1>
+          <p>Acesso liberado para: <strong>{email}</strong></p>
+        </div>
+        <nav class="ebook-nav">
+          <a href="#introducao">Introdução</a>
+          <a href="#fundamentos">Fundamentos</a>
+          <a href="#aplicacoes">Aplicações</a>
+          <a href="#implementacao">Implementação</a>
+          <a href="#estudos-caso">Estudos de Caso</a>
+        </nav>
+      </header>
+
+      <!-- Conteúdo do Ebook em MDX -->
+      <article class="ebook-content">
+        <div class="content-wrapper">
+          <div class="mdx-content">
+            <Content />
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .ebook-page {
+    min-height: 100vh;
+    background: var(--bg-primary);
+    padding: 2rem 0;
+  }
+
+  .ebook-header {
+    background: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+  }
+
+  .welcome-message h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .welcome-message p {
+    color: var(--text-tertiary);
+  }
+
+  .welcome-message strong {
+    color: var(--secondary);
+  }
+
+  .ebook-nav {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    flex-wrap: wrap;
+  }
+
+  .ebook-nav a {
+    color: var(--text-primary);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    background: var(--bg-primary);
+    transition: all 0.3s;
+    font-size: 0.95rem;
+  }
+
+  .ebook-nav a:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  .ebook-content {
+    background: var(--bg-secondary);
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+  }
+
+  .content-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem;
+  }
+
+  /* Estilos para o conteúdo MDX */
+  .mdx-content {
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+
+  .mdx-content :global(h1) {
+    font-size: 2.5rem;
+    margin: 2.5rem 0 1.5rem;
+    color: var(--text-primary);
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid var(--primary);
+  }
+
+  .mdx-content :global(h2) {
+    font-size: 2rem;
+    margin: 2rem 0 1rem;
+    color: var(--text-primary);
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  .mdx-content :global(h3) {
+    font-size: 1.5rem;
+    margin: 1.5rem 0 1rem;
+    color: var(--secondary);
+  }
+
+  .mdx-content :global(h4) {
+    font-size: 1.2rem;
+    margin: 1rem 0 0.5rem;
+    color: var(--text-primary);
+  }
+
+  .mdx-content :global(p) {
+    margin-bottom: 1rem;
+  }
+
+  .mdx-content :global(ul),
+  .mdx-content :global(ol) {
+    padding-left: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .mdx-content :global(li) {
+    margin-bottom: 0.5rem;
+  }
+
+  .mdx-content :global(strong) {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .mdx-content :global(blockquote) {
+    background: var(--bg-primary);
+    border-left: 4px solid var(--primary);
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: var(--text-secondary);
+  }
+
+  .mdx-content :global(blockquote p) {
+    margin: 0;
+  }
+
+  .mdx-content :global(code) {
+    background: var(--bg-primary);
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    color: var(--secondary);
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+  }
+
+  .mdx-content :global(pre) {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    overflow-x: auto;
+  }
+
+  .mdx-content :global(pre code) {
+    background: none;
+    padding: 0;
+    color: #e5e7eb;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .mdx-content :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px var(--shadow-color);
+  }
+
+  .mdx-content :global(figure) {
+    margin: 2.5rem 0;
+    padding: 1.5rem;
+    background: var(--bg-primary);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+  }
+
+  .mdx-content :global(figcaption) {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-tertiary);
+    font-size: 0.9rem;
+    font-style: italic;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  .mdx-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    background: var(--bg-primary);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .mdx-content :global(th),
+  .mdx-content :global(td) {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .mdx-content :global(th) {
+    background: rgba(59, 130, 246, 0.2);
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .mdx-content :global(td) {
+    color: var(--text-secondary);
+  }
+
+  .mdx-content :global(a) {
+    color: var(--primary);
+    text-decoration: underline;
+  }
+
+  .mdx-content :global(a:hover) {
+    color: var(--secondary);
+  }
+
+  .mdx-content :global(hr) {
+    border: none;
+    border-top: 2px solid var(--border-color);
+    margin: 3rem 0;
+  }
+
+  /* Boxes especiais */
+  .mdx-content :global(.info-box),
+  .mdx-content :global(.warning-box),
+  .mdx-content :global(.success-box) {
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+    border-left: 4px solid;
+  }
+
+  .mdx-content :global(.info-box) {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: var(--primary);
+  }
+
+  .mdx-content :global(.info-box h3),
+  .mdx-content :global(.info-box h4) {
+    color: var(--primary);
+    margin-top: 0;
+  }
+
+  .mdx-content :global(.warning-box) {
+    background: rgba(251, 191, 36, 0.1);
+    border-color: #fbbf24;
+  }
+
+  .mdx-content :global(.warning-box h3),
+  .mdx-content :global(.warning-box h4) {
+    color: #fbbf24;
+    margin-top: 0;
+  }
+
+  .mdx-content :global(.success-box) {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: #22c55e;
+  }
+
+  .mdx-content :global(.success-box h3),
+  .mdx-content :global(.success-box h4) {
+    color: #22c55e;
+    margin-top: 0;
+  }
+
+  .mdx-content :global(.final-note) {
+    background: var(--bg-primary);
+    padding: 2rem;
+    border-radius: 0.5rem;
+    margin-top: 3rem;
+    border: 2px solid var(--border-color);
+    text-align: center;
+  }
+
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .content-wrapper {
+      padding: 1.5rem;
+    }
+
+    .mdx-content :global(h1) {
+      font-size: 2rem;
+    }
+
+    .mdx-content :global(h2) {
+      font-size: 1.5rem;
+    }
+
+    .mdx-content :global(h3) {
+      font-size: 1.2rem;
+    }
+
+    .ebook-nav {
+      flex-direction: column;
+    }
+
+    .mdx-content :global(pre) {
+      font-size: 0.8rem;
+    }
+
+    .mdx-content :global(table) {
+      font-size: 0.85rem;
+    }
+
+    .mdx-content :global(th),
+    .mdx-content :global(td) {
+      padding: 0.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .content-wrapper {
+      padding: 1rem;
+    }
+
+    .ebook-header {
+      padding: 1.5rem;
+    }
+
+    .ebook-nav a {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>
