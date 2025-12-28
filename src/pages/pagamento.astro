@@ -1,39 +1,88 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-const ebookPrice = parseInt(import.meta.env.EBOOK_PRICE || '9999');
 const bankName = 'Banco BAI';
 const bankIBAN = 'AO06004000000157626710143';
 const bankAccount = '30157626710001';
 const accountHolder = 'Edmilson Delfim Praia';
+
+// Informações dos ebooks disponíveis
+const ebooks = [
+  {
+    id: 'pinns-petrofisica',
+    title: 'PINNs em Petrofísica',
+    subtitle: 'Integração entre Deep Learning e Equações de Rocha',
+    cover: '/images/pinns-petrofisica/cover.png',
+    price: 9999,
+    features: [
+      'Acesso vitalício ao conteúdo completo',
+      'Material em formato digital interativo (MDX)',
+      'Teoria completa sobre PINNs em Petrofísica',
+      'Atualizações futuras incluídas'
+    ]
+  },
+  {
+    id: 'integracao-de-metodos',
+    title: 'Integração de Métodos Convencionais e Machine Learning',
+    subtitle: 'Caracterização Petrofísica de Sistemas Fluviais',
+    cover: '/images/integracao-de-metodos/cover.png',
+    price: 10000,
+    features: [
+      'Acesso vitalício ao conteúdo completo',
+      'Material em formato digital interativo (MDX)',
+      'Estudo comparativo multi-escala completo',
+      'Atualizações futuras incluídas'
+    ]
+  }
+];
 ---
 
-<Layout title="Pagamento - PINNs em Petrofísica">
+<Layout title="Pagamento - Ebooks de Petrofísica">
   <main class="payment-page">
     <div class="container">
       <div class="payment-container">
-        <!-- Produto -->
-        <div class="product-info">
-          <div class="product-header">
-            <img src="/images/pinns-petrofisica/cover.png" alt="Capa do Ebook" class="product-cover" />
-            <div class="product-details">
-              <h1>PINNs em Petrofísica</h1>
-              <p>Integração entre Deep Learning e Equações de Rocha</p>
-              <div class="price-tag">
-                <span class="price-label">Valor:</span>
-                <span class="price-value">{ebookPrice} Kz</span>
+        <!-- Seleção de Ebook -->
+        <div class="ebook-selection">
+          <h2>Escolha seu Ebook</h2>
+          <div class="ebooks-grid">
+            {ebooks.map((ebook, index) => (
+              <div class={`ebook-card ${index === 0 ? 'selected' : ''}`} data-ebook-id={ebook.id} data-price={ebook.price}>
+                <div class="ebook-card-header">
+                  <img src={ebook.cover} alt={`Capa - ${ebook.title}`} class="ebook-card-cover" />
+                </div>
+                <div class="ebook-card-body">
+                  <h3>{ebook.title}</h3>
+                  <p class="ebook-subtitle">{ebook.subtitle}</p>
+                  <div class="ebook-price">
+                    <span class="price-value">{ebook.price.toLocaleString('pt-AO')} Kz</span>
+                  </div>
+                  <ul class="ebook-features">
+                    {ebook.features.map(feature => (
+                      <li>✓ {feature}</li>
+                    ))}
+                  </ul>
+                  <button class="btn-select-ebook" type="button">
+                    {index === 0 ? 'Selecionado' : 'Selecionar'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Informações do Produto Selecionado -->
+        <div class="selected-product-info">
+          <h3>Produto Selecionado:</h3>
+          <div class="selected-product-details">
+            <img id="selected-cover" src={ebooks[0].cover} alt="Capa" class="selected-cover" />
+            <div class="selected-info">
+              <h4 id="selected-title">{ebooks[0].title}</h4>
+              <p id="selected-subtitle">{ebooks[0].subtitle}</p>
+              <div class="selected-price">
+                <span class="price-label">Valor total:</span>
+                <span id="selected-price" class="price-value">{ebooks[0].price.toLocaleString('pt-AO')} Kz</span>
               </div>
             </div>
-          </div>
-
-          <div class="product-features">
-            <h3>O que você vai receber:</h3>
-            <ul>
-              <li>✓ Acesso vitalício ao conteúdo completo</li>
-              <li>✓ Material em formato digital interativo (MDX)</li>
-              <li>✓ Teoria completa sobre PINNs em Petrofísica</li>
-              <li>✓ Atualizações futuras incluídas</li>
-            </ul>
           </div>
         </div>
 
@@ -86,7 +135,7 @@ const accountHolder = 'Edmilson Delfim Praia';
 
                   <div class="pix-info-item">
                     <strong>Valor:</strong>
-                    <span class="highlight">{ebookPrice} Kz</span>
+                    <span class="highlight" id="payment-price">9.999 Kz</span>
                   </div>
                 </div>
               </div>
@@ -100,6 +149,8 @@ const accountHolder = 'Edmilson Delfim Praia';
               <p>Após fazer o pagamento, envie o comprovante:</p>
 
               <form id="proof-form" enctype="multipart/form-data">
+                <input type="hidden" id="selected-ebook" name="ebook" value="pinns-petrofisica" />
+
                 <div class="form-group">
                   <label for="email">Seu Email *</label>
                   <input
@@ -183,9 +234,194 @@ const accountHolder = 'Edmilson Delfim Praia';
   .payment-container {
     max-width: 1200px;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* Seleção de Ebook */
+  .ebook-selection {
+    background: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+  }
+
+  .ebook-selection h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    text-align: center;
+  }
+
+  .ebooks-grid {
     display: grid;
-    grid-template-columns: 400px 1fr;
-    gap: 3rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .ebook-card {
+    background: var(--bg-primary);
+    border: 2px solid var(--border-color);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .ebook-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+  }
+
+  .ebook-card.selected {
+    border-color: var(--primary);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+  }
+
+  .ebook-card-header {
+    height: 300px;
+    overflow: hidden;
+    background: var(--bg-tertiary);
+  }
+
+  .ebook-card-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ebook-card-body {
+    padding: 1.5rem;
+  }
+
+  .ebook-card-body h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    line-height: 1.4;
+  }
+
+  .ebook-subtitle {
+    color: var(--text-tertiary);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
+
+  .ebook-price {
+    margin-bottom: 1rem;
+  }
+
+  .ebook-price .price-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .ebook-features {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+  }
+
+  .ebook-features li {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+  }
+
+  .btn-select-ebook {
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 1rem;
+  }
+
+  .ebook-card.selected .btn-select-ebook {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+  }
+
+  .btn-select-ebook:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  /* Produto Selecionado */
+  .selected-product-info {
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+  }
+
+  .selected-product-info h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .selected-product-details {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .selected-cover {
+    width: 100px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+  }
+
+  .selected-info h4 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  .selected-info p {
+    color: var(--text-tertiary);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .selected-price {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .selected-price .price-label {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  .selected-price .price-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  /* Payment Section */
+  .payment-section {
+    background: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
   }
 
   .product-info {
@@ -648,12 +884,21 @@ const accountHolder = 'Edmilson Delfim Praia';
       grid-template-columns: 1fr;
     }
 
+    .ebooks-grid {
+      grid-template-columns: 1fr;
+    }
+
     .product-info {
       position: static;
     }
 
     .pix-container {
       grid-template-columns: 1fr;
+    }
+
+    .selected-product-details {
+      flex-direction: column;
+      text-align: center;
     }
 
     .qr-code-placeholder svg {
@@ -682,6 +927,80 @@ const accountHolder = 'Edmilson Delfim Praia';
 </style>
 
 <script>
+  // Seleção de Ebook
+  document.addEventListener('DOMContentLoaded', () => {
+    const ebookCards = document.querySelectorAll('.ebook-card');
+    const selectedEbookInput = document.getElementById('selected-ebook') as HTMLInputElement;
+
+    // Elementos que serão atualizados
+    const selectedCover = document.getElementById('selected-cover') as HTMLImageElement;
+    const selectedTitle = document.getElementById('selected-title') as HTMLElement;
+    const selectedSubtitle = document.getElementById('selected-subtitle') as HTMLElement;
+    const selectedPrice = document.getElementById('selected-price') as HTMLElement;
+    const paymentPrice = document.getElementById('payment-price') as HTMLElement;
+
+    // Dados dos ebooks
+    const ebooksData = [
+      {
+        id: 'pinns-petrofisica',
+        title: 'PINNs em Petrofísica',
+        subtitle: 'Integração entre Deep Learning e Equações de Rocha',
+        cover: '/images/pinns-petrofisica/cover.png',
+        price: 9999
+      },
+      {
+        id: 'integracao-de-metodos',
+        title: 'Integração de Métodos Convencionais e Machine Learning',
+        subtitle: 'Caracterização Petrofísica de Sistemas Fluviais',
+        cover: '/images/integracao-de-metodos/cover.png',
+        price: 10000
+      }
+    ];
+
+    // Função para atualizar a seleção
+    function selectEbook(card: Element) {
+      const ebookId = card.getAttribute('data-ebook-id');
+      const ebook = ebooksData.find(e => e.id === ebookId);
+
+      if (!ebook) return;
+
+      // Remove seleção de todos os cards
+      ebookCards.forEach(c => {
+        c.classList.remove('selected');
+        const btn = c.querySelector('.btn-select-ebook');
+        if (btn) btn.textContent = 'Selecionar';
+      });
+
+      // Adiciona seleção ao card clicado
+      card.classList.add('selected');
+      const selectedBtn = card.querySelector('.btn-select-ebook');
+      if (selectedBtn) selectedBtn.textContent = 'Selecionado';
+
+      // Atualiza o campo hidden
+      if (selectedEbookInput) {
+        selectedEbookInput.value = ebook.id;
+      }
+
+      // Atualiza informações do produto selecionado
+      if (selectedCover) selectedCover.src = ebook.cover;
+      if (selectedTitle) selectedTitle.textContent = ebook.title;
+      if (selectedSubtitle) selectedSubtitle.textContent = ebook.subtitle;
+      if (selectedPrice) selectedPrice.textContent = `${ebook.price.toLocaleString('pt-AO')} Kz`;
+      if (paymentPrice) paymentPrice.textContent = `${ebook.price.toLocaleString('pt-AO')} Kz`;
+    }
+
+    // Event listeners para os cards
+    ebookCards.forEach(card => {
+      card.addEventListener('click', () => selectEbook(card));
+
+      const btn = card.querySelector('.btn-select-ebook');
+      btn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        selectEbook(card);
+      });
+    });
+  });
+
   // Função auxiliar para copiar texto
   async function copyToClipboard(text: string, button: HTMLButtonElement) {
     try {
