@@ -27,12 +27,21 @@ export async function POST({ request }) {
     }
 
     // Pega os dados do body
-    const { email, days } = await request.json();
+    const { email, days, ebook } = await request.json();
 
     // Valida email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email || !emailRegex.test(email)) {
       return new Response(JSON.stringify({ error: 'Email inválido' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Valida ebook
+    const validEbooks = ['pinns-petrofisica', 'integracao-de-metodos'];
+    if (!ebook || !validEbooks.includes(ebook)) {
+      return new Response(JSON.stringify({ error: 'Ebook inválido ou não especificado' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });
@@ -50,9 +59,9 @@ export async function POST({ request }) {
     // Gera o token
     const token = createAccessToken(email, daysValid);
 
-    // Monta o link
+    // Monta o link com o slug do ebook
     const siteUrl = import.meta.env.SITE_URL || 'http://localhost:4326';
-    const link = `${siteUrl}/ebook?token=${token}`;
+    const link = `${siteUrl}/ebook/${ebook}?token=${token}`;
 
     // Calcula data de expiração
     const expiryDate = new Date(Date.now() + (daysValid * 24 * 60 * 60 * 1000));

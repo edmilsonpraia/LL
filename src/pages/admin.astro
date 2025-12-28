@@ -100,6 +100,15 @@ if (Astro.request.method === 'POST' && !isAuthenticated) {
               <p>Preencha os dados do cliente para gerar um link de acesso ao ebook</p>
 
               <form id="generate-form" class="generator-form">
+                <div class="form-group">
+                  <label for="ebook">Ebook *</label>
+                  <select id="ebook" name="ebook" required>
+                    <option value="">Selecione o ebook...</option>
+                    <option value="pinns-petrofisica">PINNs em Petrofísica</option>
+                    <option value="integracao-de-metodos">Integração de Métodos Convencionais e Machine Learning</option>
+                  </select>
+                </div>
+
                 <div class="form-row">
                   <div class="form-group">
                     <label for="email">Email do Cliente *</label>
@@ -138,6 +147,10 @@ if (Astro.request.method === 'POST' && !isAuthenticated) {
                 </div>
 
                 <div class="result-info">
+                  <div class="info-item">
+                    <strong>📚 Ebook:</strong>
+                    <span id="result-ebook"></span>
+                  </div>
                   <div class="info-item">
                     <strong>📧 Email:</strong>
                     <span id="result-email"></span>
@@ -600,14 +613,27 @@ if (Astro.request.method === 'POST' && !isAuthenticated) {
   const spinner = document.getElementById('spinner');
   const generateBtn = document.getElementById('generate-btn');
 
+  // Mapeamento dos ebooks
+  const ebooksMap = {
+    'pinns-petrofisica': 'PINNs em Petrofísica',
+    'integracao-de-metodos': 'Integração de Métodos Convencionais e Machine Learning'
+  };
+
   let currentLink = '';
   let currentEmail = '';
+  let currentEbook = '';
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    const ebook = document.getElementById('ebook').value;
     const email = document.getElementById('email').value;
     const days = document.getElementById('days').value;
+
+    if (!ebook) {
+      alert('Por favor, selecione um ebook');
+      return;
+    }
 
     // Mostra loading
     generateBtn.disabled = true;
@@ -621,7 +647,11 @@ if (Astro.request.method === 'POST' && !isAuthenticated) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, days: parseInt(days) }),
+        body: JSON.stringify({
+          email,
+          days: parseInt(days),
+          ebook: ebook
+        }),
       });
 
       const data = await response.json();
@@ -633,7 +663,9 @@ if (Astro.request.method === 'POST' && !isAuthenticated) {
       // Preenche os dados do resultado
       currentLink = data.link;
       currentEmail = email;
+      currentEbook = ebooksMap[ebook];
 
+      document.getElementById('result-ebook').textContent = ebooksMap[ebook];
       document.getElementById('result-email').textContent = email;
       document.getElementById('result-days').textContent = `${days} dias`;
       document.getElementById('result-expiry').textContent = new Date(data.expiryDate).toLocaleString('pt-BR');
@@ -672,7 +704,7 @@ if (Astro.request.method === 'POST' && !isAuthenticated) {
   function sendViaWhatsApp() {
     const message = `Olá! 👋\n\n` +
       `Seu pagamento foi confirmado! 🎉\n\n` +
-      `Aqui está seu link de acesso ao ebook "PINNs em Petrofísica":\n\n` +
+      `Aqui está seu link de acesso ao ebook "${currentEbook}":\n\n` +
       `${currentLink}\n\n` +
       `✅ Basta clicar no link para ter acesso imediato\n` +
       `✅ O acesso é vitalício\n` +
