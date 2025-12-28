@@ -116,6 +116,11 @@ export async function getStaticPaths() {
     padding-top: 1.5rem;
     border-top: 1px solid var(--border-color);
     flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    background: var(--bg-secondary);
+    z-index: 100;
+    padding: 1rem 0;
   }
 
   .ebook-nav a {
@@ -126,12 +131,21 @@ export async function getStaticPaths() {
     background: var(--bg-primary);
     transition: all 0.3s;
     font-size: 0.95rem;
+    border: 2px solid transparent;
   }
 
   .ebook-nav a:hover {
     background: var(--primary);
     color: white;
     transform: translateY(-2px);
+    border-color: var(--primary);
+  }
+
+  .ebook-nav a.active {
+    background: var(--gradient-primary);
+    color: white;
+    border-color: var(--secondary);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
   }
 
   .ebook-content {
@@ -150,6 +164,8 @@ export async function getStaticPaths() {
   .mdx-content {
     color: var(--text-secondary);
     line-height: 1.8;
+    text-align: justify;
+    text-justify: inter-word;
   }
 
   .mdx-content :global(h1) {
@@ -408,3 +424,82 @@ export async function getStaticPaths() {
     }
   }
 </style>
+
+<script>
+  // Smooth scroll para os links de navegação
+  document.addEventListener('DOMContentLoaded', () => {
+    const navLinks = document.querySelectorAll('.ebook-nav a');
+    const sections = new Map();
+
+    // Mapeia cada link ao seu elemento de seção correspondente
+    navLinks.forEach(link => {
+      const targetId = link.getAttribute('href')?.substring(1);
+      if (targetId) {
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          sections.set(link, targetElement);
+        }
+      }
+    });
+
+    // Smooth scroll ao clicar nos links
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href')?.substring(1);
+        const targetElement = targetId ? document.getElementById(targetId) : null;
+
+        if (targetElement) {
+          // Remove active de todos os links
+          navLinks.forEach(l => l.classList.remove('active'));
+          // Adiciona active ao link clicado
+          link.classList.add('active');
+
+          // Scroll suave para o elemento
+          const headerOffset = 120; // Altura do header sticky
+          const elementPosition = targetElement.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+
+    // Intersection Observer para detectar seção visível
+    const observerOptions = {
+      root: null,
+      rootMargin: '-20% 0px -70% 0px',
+      threshold: 0
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Encontra o link correspondente a esta seção
+          navLinks.forEach(link => {
+            const section = sections.get(link);
+            if (section === entry.target) {
+              // Remove active de todos
+              navLinks.forEach(l => l.classList.remove('active'));
+              // Adiciona active ao link da seção visível
+              link.classList.add('active');
+            }
+          });
+        }
+      });
+    }, observerOptions);
+
+    // Observa todas as seções
+    sections.forEach(section => {
+      observer.observe(section);
+    });
+
+    // Define a primeira seção como ativa inicialmente
+    if (navLinks.length > 0) {
+      navLinks[0].classList.add('active');
+    }
+  });
+</script>
