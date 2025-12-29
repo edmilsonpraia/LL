@@ -106,6 +106,7 @@ if (Astro.request.method === 'POST' && !isAuthenticated) {
                     <option value="">Selecione o ebook...</option>
                     <option value="pinns-petrofisica">PINNs em Petrofísica</option>
                     <option value="integracao-de-metodos">Integração de Métodos Convencionais e Machine Learning</option>
+                    <option value="seismic-ml">Machine Learning e Atributos Sísmicos para Modelagem Estrutural 3D</option>
                   </select>
                 </div>
 
@@ -616,7 +617,8 @@ if (Astro.request.method === 'POST' && !isAuthenticated) {
   // Mapeamento dos ebooks
   const ebooksMap = {
     'pinns-petrofisica': 'PINNs em Petrofísica',
-    'integracao-de-metodos': 'Integração de Métodos Convencionais e Machine Learning'
+    'integracao-de-metodos': 'Integração de Métodos Convencionais e Machine Learning',
+    'seismic-ml': 'Machine Learning e Atributos Sísmicos para Modelagem Estrutural 3D'
   };
 
   let currentLink = '';

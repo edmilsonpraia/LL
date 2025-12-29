@@ -39,7 +39,7 @@ export async function POST({ request }) {
     }
 
     // Valida ebook
-    const validEbooks = ['pinns-petrofisica', 'integracao-de-metodos'];
+    const validEbooks = ['pinns-petrofisica', 'integracao-de-metodos', 'seismic-ml'];
     if (!ebook || !validEbooks.includes(ebook)) {
       return new Response(JSON.stringify({ error: 'Ebook inválido ou não especificado' }), {
         status: 400,
