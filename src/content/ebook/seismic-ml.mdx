@@ -237,40 +237,6 @@ O modelo de estrutura, ou framework, é o esqueleto do nosso modelo geológico. 
 
 **Figura 10:** O modelo geológico 3D visualizado de quatro ângulos diferentes (Sudeste, Sudoeste, Noroeste, Nordeste). Esta análise panorâmica é essencial para confirmar a geometria da armadilha e planear a localização ótima dos poços de exploração e produção.
 
-### Análise Volumétrica: Quantificando o Potencial
-
-Uma vez que o modelo de estrutura 3D está construído, podemos calcular o volume de rocha contido entre os horizontes. Este é o Volume Bruto de Rocha (Bulk Rock Volume - BRV). É o primeiro e mais fundamental passo no cálculo dos volumes de hidrocarbonetos.
-
-O cálculo é realizado numericamente, somando o volume de cada célula da grelha do modelo entre duas superfícies. Para o nosso estudo de caso, dividimos o reservatório em dois compartimentos principais:
-
-- **Compartimento Superior (H1 a H2):** O volume de rocha entre o Horizonte 1 e o Horizonte 2
-- **Compartimento Inferior (H2 a H3):** O volume de rocha entre o Horizonte 2 e o Horizonte 3
-
-Os resultados da nossa análise foram os seguintes:
-
-| Compartimento | Espessura Média (ms) | Volume Bruto (milhões m³) | Volume Bruto (milhões de barris) |
-|---------------|---------------------|---------------------------|----------------------------------|
-| H1 - H2       | 92                  | 0.81                      | 5.09                             |
-| H2 - H3       | 229                 | 2.05                      | 12.90                            |
-| Total         | -                   | 2.86                      | 18.00                            |
-
-**Tabela 1:** Resultados da análise volumétrica para os dois compartimentos definidos pelos horizontes H1, H2 e H3. A conversão para barris assume uma conversão padrão e serve apenas para fins ilustrativos.
-
-### Do Volume Bruto ao Petróleo no Local (HCIIP)
-
-É crucial entender que o Volume Bruto de Rocha não é o volume de petróleo. Para chegar à estimativa de Hidrocarbonetos no Local (Hydrocarbons In-Place - HCIIP), o BRV deve ser multiplicado por vários outros fatores, que são determinados a partir de dados de poços, análises de testemunhos e modelos petrofísicos:
-
-$$\text{HCIIP} = \text{BRV} \times N/G \times \phi \times (1 - S_w) \times \frac{1}{\text{FVF}}$$
-
-Onde:
-
-- $N/G$ (Net-to-Gross ratio): A proporção de rocha reservatório (arenito) dentro do volume bruto. Nem toda a rocha entre os horizontes é reservatório; pode haver camadas de folhelho
-- $\phi$ (Porosidade): A fração do volume da rocha que é espaço poroso, capaz de armazenar fluidos
-- $S_w$ (Saturação de Água): A fração do espaço poroso que está preenchida com água. O restante está preenchido com hidrocarbonetos $(1 - S_w)$
-- FVF (Fator de Volume de Formação): Um fator que converte o volume de petróleo nas condições de alta pressão e temperatura do reservatório para o volume que ele ocuparia nas condições de superfície
-
-Embora a nossa metodologia se concentre na determinação do BRV, a precisão deste primeiro passo é fundamental. Um erro de 10% no BRV irá propagar-se diretamente para um erro de 10% na estimativa final de HCIIP, com implicações económicas massivas. Isto sublinha a importância de ter um modelo estrutural preciso, como o que foi gerado pelo nosso fluxo de trabalho híbrido.
-
 <h2 id="discussao">DISCUSSÃO: IMPLICAÇÕES, LIMITAÇÕES E O FUTURO DA INTERPRETAÇÃO</h2>
 
 Os resultados apresentados demonstram que a nossa metodologia híbrida é capaz de produzir um modelo estrutural 3D de alta qualidade de forma rápida e automatizada. No entanto, é crucial ir além dos resultados e discutir as suas implicações práticas, as limitações inerentes e a trajetória futura desta tecnologia.
